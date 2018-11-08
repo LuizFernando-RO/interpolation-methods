@@ -110,39 +110,81 @@ class Application:
 		self.NG["command"] = self.newtonGregoryAlg
 		self.NG.pack(side=LEFT)
 
+		self.allMethods = Button(self.quintoContainer)
+		self.allMethods["text"] = "Todos"
+		self.allMethods["font"] = ("Calibri", "8")
+		self.allMethods["width"] = 12
+		self.allMethods["command"] = self.all
+		self.allMethods.pack(side=LEFT)
+
 		#
 		self.canvasFig=plt.figure(1)
-		Fig = Figure(figsize=(4,3),dpi=100)
-		FigSubPlot = Fig.add_subplot(111)
+		self.Fig = Figure(figsize=(4,3),dpi=100)
+		self.FigSubPlot = self.Fig.add_subplot(111)
 		x=[]
 		y=[]
-		self.line1, = FigSubPlot.plot(x,y,label='orig')
-		self.line2, = FigSubPlot.plot(x,y, label='interp')
-		self.line3, = FigSubPlot.plot(x,y,'ro')
-		self.canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(Fig, master=self.sextoContainer)
+		self.line1, = self.FigSubPlot.plot(x,y,label='orig')
+		self.line2, = self.FigSubPlot.plot(x,y, label='interp1')
+		# self.line4, = FigSubPlot.plot(x,y, label='interp2')
+		# self.line5, = FigSubPlot.plot(x,y, label='interp3')
+		self.line3, = self.FigSubPlot.plot(x,y,'ro')
+		self.canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(self.Fig, master=self.sextoContainer)
 		self.canvas.show()
 		self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
 		self.canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
+
+	def all(self):
+
+		arr = np.array(self.pontos)
+		X = arr[:,0].tolist()
+		Y = arr[:,1].tolist()
+		h = X[1] - X[0]
+
+		t = linspace(-2,6,100)
+		o = self.original(t)
+
+		lagrange = self.pol(t,X,Y)
+		newton = self.N(t,X,Y)
+		newtonGregory = self.polNG(len(X)-1,t,X,Y,h)
+
+		self.Fig.clf()
+		self.FigSubPlot = self.Fig.add_subplot(111)
+		self.FigSubPlot.plot(t,o,label='Original')
+		self.FigSubPlot.plot(t,lagrange, label='Lagrange')
+		self.FigSubPlot.plot(t,newton, label='Newton')
+		self.FigSubPlot.plot(t,newtonGregory, label='NG')
+		self.FigSubPlot.plot(X,Y,'ro')
+
+		self.canvas.figure.suptitle("Todos os Métodos")
+		self.canvas.figure.legend(loc='upper right')
+		ax = self.canvas.figure.axes[0]
+		ax.set_xlim(t.min(), t.max())
+		ax.set_ylim(o.min(), o.max())
+		self.canvas.draw()
 
 	def lagrangeAlg(self):
 
 		arr = np.array(self.pontos)
 		X = arr[:,0].tolist()
 		Y = arr[:,1].tolist()
+		
 
 		t = linspace(-2,6,100)
 		o = self.original(t)
 
 		lagrange = self.pol(t,X,Y)
-		
+
+		self.Fig.clf()
+		self.FigSubPlot = self.Fig.add_subplot(111)
+		self.FigSubPlot.plot(t,o,label='Original')
+		self.FigSubPlot.plot(t,lagrange, label='lagrange')
+		self.FigSubPlot.plot(X,Y,'ro')
+
 		self.canvas.figure.suptitle("Lagrange")
 		self.canvas.figure.legend(loc='upper right')
-		self.line1.set_data(t,o)
-		self.line2.set_data(t,lagrange)
-		self.line3.set_data(X,Y)
 		ax = self.canvas.figure.axes[0]
 		ax.set_xlim(t.min(), t.max())
-		ax.set_ylim(o.min(), o.max())        
+		ax.set_ylim(o.min(), o.max())
 		self.canvas.draw()
 
 	def numerator(self,x,k,X):
@@ -181,13 +223,17 @@ class Application:
 
 		newton = self.N(t,X,Y)
 
+		self.Fig.clf()
+		self.FigSubPlot = self.Fig.add_subplot(111)
+		self.FigSubPlot.plot(t,o,label='Original')
+		self.FigSubPlot.plot(t,newton, label='Newton')
+		self.FigSubPlot.plot(X,Y,'ro')
+
 		self.canvas.figure.suptitle("Newton")
-		self.line1.set_data(t,o)
-		self.line2.set_data(t,newton)
-		self.line3.set_data(X,Y)
+		self.canvas.figure.legend(loc='upper right')
 		ax = self.canvas.figure.axes[0]
 		ax.set_xlim(t.min(), t.max())
-		ax.set_ylim(o.min(), o.max())        
+		ax.set_ylim(o.min(), o.max())
 		self.canvas.draw()
 
 	def n(self,j,xc,x):
@@ -222,15 +268,19 @@ class Application:
 		t = linspace(-2,6,100)
 		o = self.original(t)
 
-		newtonGregory = self.polNG(4,t,X,Y,h)
+		newtonGregory = self.polNG(len(X)-1,t,X,Y,h)
+
+		self.Fig.clf()
+		self.FigSubPlot = self.Fig.add_subplot(111)
+		self.FigSubPlot.plot(t,o,label='Original')
+		self.FigSubPlot.plot(t,newtonGregory, label='NG')
+		self.FigSubPlot.plot(X,Y,'ro')
 
 		self.canvas.figure.suptitle("Newton-Gregory")
-		self.line1.set_data(t,o)
-		self.line2.set_data(t,newtonGregory)
-		self.line3.set_data(X,Y)
+		self.canvas.figure.legend(loc='upper right')
 		ax = self.canvas.figure.axes[0]
 		ax.set_xlim(t.min(), t.max())
-		ax.set_ylim(o.min(), o.max())        
+		ax.set_ylim(o.min(), o.max())
 		self.canvas.draw()
 
 	def delta(self,r,x,X,Y,h):
