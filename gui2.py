@@ -13,6 +13,7 @@ import scipy as sc
 class Application:
 
 	pontos = [[0.42,18.9394688],[0.92,2.0833332],[1.42,20.7794668],[1.92,4.9233332],[2.42,24.6194668]]
+	title = "teste"
 
 	def __init__(self, main):
 		self.fontePadrao = ("Arial", "10")
@@ -115,8 +116,9 @@ class Application:
 		FigSubPlot = Fig.add_subplot(111)
 		x=[]
 		y=[]
-		self.line1, = FigSubPlot.plot(x,y,label='original')
-		self.line2, = FigSubPlot.plot(x,y)
+		self.line1, = FigSubPlot.plot(x,y,label='orig')
+		self.line2, = FigSubPlot.plot(x,y, label='interp')
+		self.line3, = FigSubPlot.plot(x,y,'ro')
 		self.canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(Fig, master=self.sextoContainer)
 		self.canvas.show()
 		self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
@@ -132,23 +134,12 @@ class Application:
 		o = self.original(t)
 
 		lagrange = self.pol(t,X,Y)
-
-		# ax1 = subplot(231)
-		# ax1.plot(t,o, label='original')
-		# ax1.plot(t,lagrange, label='lagrange')
-		# ax1.grid(True)
-		# ax1.plot(X,Y,'ro')
-
-		# x=[]
-		# y=[]
-		# for num in range(0,1000):x.append(num*.001+1)
-		# # just some random function is given here, the real data is a UV-Vis spectrum
-		# for num2 in range(0,1000):y.append(sc.math.sin(num2*.06)+sc.math.e**(num2*.001))
-		# x = np.array(x)
-		# y = np.array(y)
 		
+		self.canvas.figure.suptitle("Lagrange")
+		self.canvas.figure.legend(loc='upper right')
 		self.line1.set_data(t,o)
 		self.line2.set_data(t,lagrange)
+		self.line3.set_data(X,Y)
 		ax = self.canvas.figure.axes[0]
 		ax.set_xlim(t.min(), t.max())
 		ax.set_ylim(o.min(), o.max())        
@@ -190,6 +181,15 @@ class Application:
 
 		newton = self.N(t,X,Y)
 
+		self.canvas.figure.suptitle("Newton")
+		self.line1.set_data(t,o)
+		self.line2.set_data(t,newton)
+		self.line3.set_data(X,Y)
+		ax = self.canvas.figure.axes[0]
+		ax.set_xlim(t.min(), t.max())
+		ax.set_ylim(o.min(), o.max())        
+		self.canvas.draw()
+
 	def n(self,j,xc,x):
 		n = 1
 		for i in range(j):
@@ -223,6 +223,15 @@ class Application:
 		o = self.original(t)
 
 		newtonGregory = self.polNG(4,t,X,Y,h)
+
+		self.canvas.figure.suptitle("Newton-Gregory")
+		self.line1.set_data(t,o)
+		self.line2.set_data(t,newtonGregory)
+		self.line3.set_data(X,Y)
+		ax = self.canvas.figure.axes[0]
+		ax.set_xlim(t.min(), t.max())
+		ax.set_ylim(o.min(), o.max())        
+		self.canvas.draw()
 
 	def delta(self,r,x,X,Y,h):
 		if r == 0:
