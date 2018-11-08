@@ -95,7 +95,7 @@ o = original(t)
 
 lagrange = pol(t)
 newton = N(t,X,Y)
-newtonGregory = polNG(3,t)
+newtonGregory = polNG(4,t)
 
 plt.suptitle("Comparação entre os métodos")
 ax1 = subplot(231)
@@ -132,5 +132,4 @@ ax4.plot(X,Y,'ro')
 ax4.set_ylim(0,50)
 ax4.set_xlim(-2,6)
 ax4.legend(loc='upper right')
-
 show()
